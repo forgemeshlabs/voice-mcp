@@ -71,7 +71,7 @@ const TOOLS = [
       properties: {
         input: { type: "string", description: "Text to synthesize, max 2000 characters" },
         voice: { type: "string", description: "Standard voice: M1-M5 or F1-F5" },
-        model: { type: "string", description: "Optional model field; service uses Supertonic 3" },
+        model: { type: "string", description: "Optional model field; service uses ForgeMesh Voice" },
         response_format: { type: "string", description: "wav, flac, or ogg" },
       },
       required: ["input"],
@@ -230,7 +230,7 @@ async function callTool(name, args = {}) {
     return paidPost(path, {
       input,
       voice: args.voice || "M1",
-      model: args.model || "supertonic-3",
+      model: args.model || "forgemesh-voice",
       response_format: args.response_format || "wav",
     });
   }
