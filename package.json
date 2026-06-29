@@ -1,0 +1,57 @@
+{
+  "name": "x402-tts-mcp",
+  "version": "0.1.0",
+  "mcpName": "io.github.forgemeshlabs/x402-tts-mcp",
+  "description": "Give AI agents a voice with x402 pay-per-call text-to-speech, OpenAI-shaped speech requests, persona voices, and Base USDC micropayments",
+  "main": "index.js",
+  "bin": {
+    "x402-tts-mcp": "index.js"
+  },
+  "files": [
+    "index.js",
+    "README.md",
+    "server.json"
+  ],
+  "scripts": {
+    "start": "node index.js",
+    "check": "node --check index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "x402",
+    "text-to-speech",
+    "tts",
+    "voice",
+    "agent-voice",
+    "openai-compatible",
+    "supertonic",
+    "forgemesh",
+    "coinbase",
+    "base",
+    "usdc",
+    "micropayments"
+  ],
+  "author": "ForgeMesh Labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forgemeshlabs/x402-tts-mcp.git"
+  },
+  "homepage": "https://tts.forgemesh.io",
+  "bugs": {
+    "url": "https://github.com/forgemeshlabs/x402-tts-mcp/issues"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.1",
+    "@x402/core": "2.11.0",
+    "@x402/evm": "2.11.0",
+    "viem": "^2.0.0"
+  },
+  "overrides": {
+    "ws": "8.21.0"
+  }
+}
