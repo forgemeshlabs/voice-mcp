@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 "use strict";
 
-const { Server } = require("@modelcontextprotocol/sdk/server/index.js");
+const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp.js");
 const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
-const { CallToolRequestSchema, ListToolsRequestSchema } = require("@modelcontextprotocol/sdk/types.js");
+const { z } = require("zod");
 const { x402Client, x402HTTPClient } = require("@x402/core/client");
 const { ExactEvmScheme } = require("@x402/evm/exact/client");
 const { toClientEvmSigner } = require("@x402/evm");
@@ -95,6 +95,46 @@ const TOOLS = [
   },
 ];
 
+const TOOL_SCHEMAS = {
+  list_tts_voices: {},
+  speak_standard: {
+    text: z.string().describe("Text to synthesize, max 2000 characters"),
+    voice: z.string().optional().describe("Standard voice: M1-M5 or F1-F5"),
+    lang: z.string().optional().describe("Language code, default en"),
+  },
+  speak_pro: {
+    text: z.string().describe("Text to synthesize, max 2000 characters"),
+    voice: z.string().optional().describe("Standard voice: M1-M5 or F1-F5"),
+    lang: z.string().optional().describe("Language code, default en"),
+    speed: z.number().optional().describe("Speech speed, 0.7-2.0"),
+    steps: z.number().int().optional().describe("Quality steps, 1-100"),
+  },
+  speak_persona: {
+    text: z.string().describe("Text to synthesize, max 2000 characters"),
+    voice: z.string().optional().describe("Persona voice name, default Storyteller"),
+    lang: z.string().optional().describe("Language code, default en"),
+    speed: z.number().optional().describe("Speech speed, 0.7-2.0"),
+    steps: z.number().int().optional().describe("Quality steps, 1-100"),
+  },
+  openai_speech: {
+    input: z.string().describe("Text to synthesize, max 2000 characters"),
+    voice: z.string().optional().describe("Standard voice: M1-M5 or F1-F5"),
+    model: z.string().optional().describe("Optional model field; service uses ForgeMesh Voice"),
+    response_format: z.string().optional().describe("wav, flac, or ogg"),
+  },
+  batch_speak: {
+    items: z.array(z.object({
+      text: z.string(),
+      voice: z.string().optional(),
+      lang: z.string().optional(),
+    })).min(1).max(20).describe("Array of text items"),
+    defaults: z.object({
+      voice: z.string().optional(),
+      lang: z.string().optional(),
+    }).optional().describe("Default standard voice and language"),
+  },
+};
+
 function pickBucketEndpoint(shortPath, longPath, length) {
   if (length > 2000) throw new Error("Text is over the 2000 character maximum");
   return length > 500 ? longPath : shortPath;
@@ -158,7 +198,7 @@ async function paidPost(path, body) {
     ...init,
     headers: {
       ...init.headers,
-      "X-Payment": httpClient.encodePayment(paymentPayload),
+      ...httpClient.encodePaymentSignatureHeader(paymentPayload),
     },
   });
   if (!paidRes.ok) {
@@ -245,29 +285,47 @@ async function callTool(name, args = {}) {
   throw new Error(`Unknown tool: ${name}`);
 }
 
-const server = new Server(
-  { name: "x402-tts-mcp", version: "0.1.0" },
-  { capabilities: { tools: {} } }
-);
-
-server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  const { name, arguments: args } = request.params;
-  try {
-    return textResult(await callTool(name, args || {}));
-  } catch (error) {
-    return {
-      isError: true,
-      content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }],
-    };
-  }
-});
+const server = new McpServer({ name: "x402-tts-mcp", version: "0.1.0" });
+server.server.onerror = (error) => {
+  console.error(error instanceof Error ? error.message : String(error));
+};
+for (const tool of TOOLS) {
+  server.registerTool(
+    tool.name,
+    {
+      title: tool.name,
+      description: tool.description,
+      inputSchema: TOOL_SCHEMAS[tool.name],
+    },
+    async (args) => {
+      try {
+        return textResult(await callTool(tool.name, args || {}));
+      } catch (error) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }],
+        };
+      }
+    }
+  );
+}
 
 async function main() {
   await server.connect(new StdioServerTransport());
+  process.stdin.resume();
+  const keepAlive = setInterval(() => {}, 2 ** 30);
+  process.stdin.on("end", () => clearInterval(keepAlive));
 }
 
-main().catch((error) => {
-  console.error(error instanceof Error ? error.message : String(error));
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  TOOLS,
+  TOOL_SCHEMAS,
+  pickBucketEndpoint,
+};
