@@ -11,7 +11,7 @@ const { privateKeyToAccount } = require("viem/accounts");
 const { createPublicClient, http } = require("viem");
 const { base } = require("viem/chains");
 
-const BASE_URL = (process.env.X402_TTS_BASE_URL || "https://tts.forgemesh.io").replace(/\/+$/, "");
+const BASE_URL = (process.env.X402_TTS_BASE_URL || "https://voice.forgemesh.io").replace(/\/+$/, "");
 const BASE_RPC_URL = process.env.BASE_RPC_URL || "https://mainnet.base.org";
 
 const TOOLS = [
@@ -327,5 +327,6 @@ if (require.main === module) {
 module.exports = {
   TOOLS,
   TOOL_SCHEMAS,
+  callTool,
   pickBucketEndpoint,
 };
