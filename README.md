@@ -30,12 +30,12 @@ This MCP wraps `https://voice.forgemesh.io`, an x402 Voice API with standard voi
 
 | Tool | Price | Purpose |
 |------|-------|---------|
-| `list_tts_voices` | Free | Voices, personas, languages, pricing |
-| `speak_standard` | $0.001 / $0.003 | Standard voices |
-| `speak_pro` | $0.003 / $0.006 | Speed and quality controls |
-| `speak_persona` | $0.005 / $0.01 | Storyteller, Velvet, Narrator, Announcer, Assistant, Urgent, and more |
-| `openai_speech` | $0.001 / $0.003 | OpenAI-shaped `/v1/audio/speech` request |
-| `batch_speak` | $0.002 / $0.005 | Up to 20 texts per call |
+| `list_voice_catalog` | Free | Voices, personas, languages, pricing, buckets, and controls |
+| `generate_standard_voice` | $0.001 / $0.003 | Low-cost speech with 10 standard voices |
+| `generate_controlled_voice` | $0.003 / $0.006 | Speech with granular speed and quality controls |
+| `generate_persona_voice` | $0.005 / $0.01 | Storyteller, Velvet, Narrator, Announcer, Assistant, Urgent, and more |
+| `generate_openai_compatible_voice` | $0.001 / $0.003 | OpenAI-shaped `/v1/audio/speech` request |
+| `generate_batch_voices` | $0.002 / $0.005 | Up to 20 texts per call |
 
 Short prices apply to 1-500 characters. Long prices apply to 501-2000 characters.
 

@@ -4,12 +4,12 @@
 const { TOOLS, TOOL_SCHEMAS, pickBucketEndpoint } = require("../index.js");
 
 const expected = [
-  "batch_speak",
-  "list_tts_voices",
-  "openai_speech",
-  "speak_persona",
-  "speak_pro",
-  "speak_standard",
+  "generate_batch_voices",
+  "generate_controlled_voice",
+  "generate_openai_compatible_voice",
+  "generate_persona_voice",
+  "generate_standard_voice",
+  "list_voice_catalog",
 ];
 
 const names = TOOLS.map((tool) => tool.name).sort();

@@ -19,13 +19,15 @@ const BASE_RPC_URL = process.env.BASE_RPC_URL || "https://mainnet.base.org";
 
 const TOOLS = [
   {
-    name: "list_tts_voices",
-    description: "List voices, persona voices, languages, prices, and character buckets. Free.",
+    name: "list_voice_catalog",
+    title: "List Voice Catalog",
+    description: "Free discovery tool. Lists all 20 voices, 10 persona voices, 31 language codes, price buckets, character limits, and granular speed/quality controls before a paid voice generation call.",
     inputSchema: { type: "object", properties: {} },
   },
   {
-    name: "speak_standard",
-    description: "Give an agent a standard voice using 10 voices and 31 languages. Costs $0.001 for <=500 chars or $0.003 for 501-2000 chars.",
+    name: "generate_standard_voice",
+    title: "Generate Standard Voice",
+    description: "Generate low-cost WAV speech from text using one of 10 standard voices across 31 languages. Best for simple agent narration, status updates, alerts, and short spoken responses. Costs $0.001 for 1-500 chars or $0.003 for 501-2000 chars.",
     inputSchema: {
       type: "object",
       properties: {
@@ -37,8 +39,9 @@ const TOOLS = [
     },
   },
   {
-    name: "speak_pro",
-    description: "Generate tuned agent speech with speed and quality controls. Costs $0.003 for <=500 chars or $0.006 for 501-2000 chars.",
+    name: "generate_controlled_voice",
+    title: "Generate Controlled Voice",
+    description: "Generate WAV speech with granular controls for speed and quality. Use this when an agent needs faster, slower, clearer, more polished, or more deliberate delivery. Costs $0.003 for 1-500 chars or $0.006 for 501-2000 chars.",
     inputSchema: {
       type: "object",
       properties: {
@@ -52,8 +55,9 @@ const TOOLS = [
     },
   },
   {
-    name: "speak_persona",
-    description: "Give an agent a persona voice such as Storyteller, Velvet, Narrator, Announcer, Assistant, or Urgent. Costs $0.005 for <=500 chars or $0.01 for 501-2000 chars.",
+    name: "generate_persona_voice",
+    title: "Generate Persona Voice",
+    description: "Generate expressive WAV speech with persona voices such as Storyteller, Narrator, Announcer, Assistant, Urgent, Sage, Spark, Anchor, Velvet, or Echo. Best for branded agents, characters, demos, stories, alerts, and premium user experiences. Costs $0.005 for 1-500 chars or $0.01 for 501-2000 chars.",
     inputSchema: {
       type: "object",
       properties: {
@@ -67,8 +71,9 @@ const TOOLS = [
     },
   },
   {
-    name: "openai_speech",
-    description: "OpenAI-shaped speech request for agents already wired to /v1/audio/speech. Costs $0.001 for <=500 chars or $0.003 for 501-2000 chars.",
+    name: "generate_openai_compatible_voice",
+    title: "Generate OpenAI-Compatible Voice",
+    description: "Generate speech using an OpenAI-shaped request with input, voice, model, and response_format fields. Use this for agents or apps already designed around /v1/audio/speech style payloads. Costs $0.001 for 1-500 chars or $0.003 for 501-2000 chars.",
     inputSchema: {
       type: "object",
       properties: {
@@ -81,8 +86,9 @@ const TOOLS = [
     },
   },
   {
-    name: "batch_speak",
-    description: "Generate audio for up to 20 standard-voice texts in one paid call. Costs $0.002 for <=500 total chars or $0.005 for 501-2000 total chars.",
+    name: "generate_batch_voices",
+    title: "Generate Batch Voices",
+    description: "Generate WAV audio for up to 20 text items in one paid call using standard voices. Best for queues, notifications, scripted sequences, content batches, and multi-step agent workflows. Costs $0.002 for up to 500 total chars or $0.005 for 501-2000 total chars.",
     inputSchema: {
       type: "object",
       properties: {
@@ -99,33 +105,33 @@ const TOOLS = [
 ];
 
 const TOOL_SCHEMAS = {
-  list_tts_voices: {},
-  speak_standard: {
+  list_voice_catalog: {},
+  generate_standard_voice: {
     text: z.string().describe("Text to synthesize, max 2000 characters"),
     voice: z.string().optional().describe("Standard voice: M1-M5 or F1-F5"),
     lang: z.string().optional().describe("Language code, default en"),
   },
-  speak_pro: {
+  generate_controlled_voice: {
     text: z.string().describe("Text to synthesize, max 2000 characters"),
     voice: z.string().optional().describe("Standard voice: M1-M5 or F1-F5"),
     lang: z.string().optional().describe("Language code, default en"),
     speed: z.number().optional().describe("Speech speed, 0.7-2.0"),
     steps: z.number().int().optional().describe("Quality steps, 1-100"),
   },
-  speak_persona: {
+  generate_persona_voice: {
     text: z.string().describe("Text to synthesize, max 2000 characters"),
     voice: z.string().optional().describe("Persona voice name, default Storyteller"),
     lang: z.string().optional().describe("Language code, default en"),
     speed: z.number().optional().describe("Speech speed, 0.7-2.0"),
     steps: z.number().int().optional().describe("Quality steps, 1-100"),
   },
-  openai_speech: {
+  generate_openai_compatible_voice: {
     input: z.string().describe("Text to synthesize, max 2000 characters"),
     voice: z.string().optional().describe("Standard voice: M1-M5 or F1-F5"),
     model: z.string().optional().describe("Optional model field; service uses ForgeMesh Voice"),
     response_format: z.string().optional().describe("wav, flac, or ogg"),
   },
-  batch_speak: {
+  generate_batch_voices: {
     items: z.array(z.object({
       text: z.string(),
       voice: z.string().optional(),
@@ -235,15 +241,15 @@ function textResult(value) {
 }
 
 async function callTool(name, args = {}) {
-  if (name === "list_tts_voices") return freeGet("/v1/voices");
+  if (name === "list_voice_catalog") return freeGet("/v1/voices");
 
-  if (name === "speak_standard") {
+  if (name === "generate_standard_voice") {
     const text = String(args.text || "");
     const path = pickBucketEndpoint("/v1/tts/base", "/v1/tts/base-long", text.length);
     return paidPost(path, { text, voice: args.voice || "M1", lang: args.lang || "en" });
   }
 
-  if (name === "speak_pro") {
+  if (name === "generate_controlled_voice") {
     const text = String(args.text || "");
     const path = pickBucketEndpoint("/v1/tts/pro", "/v1/tts/pro-long", text.length);
     return paidPost(path, {
@@ -255,7 +261,7 @@ async function callTool(name, args = {}) {
     });
   }
 
-  if (name === "speak_persona") {
+  if (name === "generate_persona_voice") {
     const text = String(args.text || "");
     const path = pickBucketEndpoint("/v1/tts/custom", "/v1/tts/custom-long", text.length);
     return paidPost(path, {
@@ -267,7 +273,7 @@ async function callTool(name, args = {}) {
     });
   }
 
-  if (name === "openai_speech") {
+  if (name === "generate_openai_compatible_voice") {
     const input = String(args.input || "");
     const path = pickBucketEndpoint("/v1/audio/speech", "/v1/audio/speech-long", input.length);
     return paidPost(path, {
@@ -278,7 +284,7 @@ async function callTool(name, args = {}) {
     });
   }
 
-  if (name === "batch_speak") {
+  if (name === "generate_batch_voices") {
     if (!Array.isArray(args.items) || args.items.length === 0) throw new Error("items must be a non-empty array");
     const totalChars = args.items.reduce((sum, item) => sum + String(item?.text || "").length, 0);
     const path = pickBucketEndpoint("/v1/tts/batch", "/v1/tts/batch-long", totalChars);
@@ -296,7 +302,7 @@ for (const tool of TOOLS) {
   server.registerTool(
     tool.name,
     {
-      title: tool.name,
+      title: tool.title,
       description: tool.description,
       inputSchema: TOOL_SCHEMAS[tool.name],
     },

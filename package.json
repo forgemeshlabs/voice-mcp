@@ -1,6 +1,6 @@
 {
   "name": "@forgemeshlabs/voice-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "mcpName": "io.github.forgemeshlabs/voice-mcp",
   "description": "Give Your Agent A Voice: x402 pay-per-call speech with 20 voices, 10 personas, 31 languages, granular speed and quality controls, OpenAI-shaped requests, and batch audio",
   "main": "index.js",
