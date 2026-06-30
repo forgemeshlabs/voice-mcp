@@ -1,5 +1,7 @@
 # Voice MCP
 
+[![npm version](https://img.shields.io/npm/v/@forgemeshlabs/voice-mcp)](https://www.npmjs.com/package/@forgemeshlabs/voice-mcp)
+[![npm downloads](https://img.shields.io/npm/dm/@forgemeshlabs/voice-mcp)](https://www.npmjs.com/package/@forgemeshlabs/voice-mcp)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![payments](https://img.shields.io/badge/payments-x402%20USDC-0052FF)](https://x402.org)
@@ -40,7 +42,7 @@ Short prices apply to 1-500 characters. Long prices apply to 501-2000 characters
 ## Install
 
 ```bash
-npm install -g voice-mcp
+npm install -g @forgemeshlabs/voice-mcp
 ```
 
 ## MCP Config
