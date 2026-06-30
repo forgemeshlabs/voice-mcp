@@ -11,6 +11,7 @@
     "index.js",
     "README.md",
     "CHANGELOG.md",
+    "LICENSE",
     "SECURITY.md",
     "Dockerfile",
     "glama.json",
