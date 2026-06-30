@@ -2,7 +2,7 @@
   "name": "voice-mcp",
   "version": "0.1.0",
   "mcpName": "io.github.forgemeshlabs/voice-mcp",
-  "description": "Give AI agents a voice with x402 pay-per-call speech, OpenAI-shaped speech requests, persona voices, and Base USDC micropayments",
+  "description": "Give Your Agent A Voice: x402 pay-per-call speech with standard voices, persona voices, OpenAI-shaped requests, and batch audio with no API keys or subscriptions",
   "main": "index.js",
   "bin": {
     "voice-mcp": "index.js"
@@ -39,7 +39,10 @@
     "usdc",
     "micropayments"
   ],
-  "author": "ForgeMesh Labs",
+  "author": "clawdbotworker <clawdbotworker@gmail.com>",
+  "maintainers": [
+    "clawdbotworker <clawdbotworker@gmail.com>"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

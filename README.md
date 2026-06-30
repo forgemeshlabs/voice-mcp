@@ -1,6 +1,6 @@
 # Voice MCP
 
-Give AI agents a voice with x402 pay-per-call speech.
+Give Your Agent A Voice: x402 pay-per-call speech with standard voices, persona voices, OpenAI-shaped requests, and batch audio with no API keys or subscriptions.
 
 This MCP wraps `https://voice.forgemesh.io`, an x402 Voice API with standard voices, persona voices, OpenAI-shaped speech requests, 31 languages, speed controls, quality controls, and batch generation. Payments are made per call in USDC on Base.
 

@@ -1,7 +1,7 @@
 {
   "name": "voice-mcp",
   "version": "0.1.0",
-  "description": "Give AI agents a voice with x402 pay-per-call speech",
+  "description": "Give Your Agent A Voice: x402 pay-per-call speech with standard voices, persona voices, OpenAI-shaped requests, and batch audio with no API keys or subscriptions",
   "homepage": "https://voice.forgemesh.io",
   "repository": "https://github.com/forgemeshlabs/voice-mcp",
   "transport": {
