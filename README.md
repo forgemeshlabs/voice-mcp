@@ -1,7 +1,5 @@
 # Voice MCP
 
-[![npm version](https://img.shields.io/npm/v/voice-mcp)](https://www.npmjs.com/package/voice-mcp)
-[![npm downloads](https://img.shields.io/npm/dm/voice-mcp)](https://www.npmjs.com/package/voice-mcp)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![payments](https://img.shields.io/badge/payments-x402%20USDC-0052FF)](https://x402.org)
