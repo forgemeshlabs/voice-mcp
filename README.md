@@ -1,8 +1,16 @@
 # Voice MCP
 
-Give Your Agent A Voice: x402 pay-per-call speech with standard voices, persona voices, OpenAI-shaped requests, and batch audio with no API keys or subscriptions.
+Give Your Agent A Voice: x402 pay-per-call speech with 20 voices, 10 personas, 31 languages, granular speed and quality controls, OpenAI-shaped requests, and batch audio.
 
 This MCP wraps `https://voice.forgemesh.io`, an x402 Voice API with standard voices, persona voices, OpenAI-shaped speech requests, 31 languages, speed controls, quality controls, and batch generation. Payments are made per call in USDC on Base.
+
+## Voice Coverage
+
+- 10 standard voices: `M1`-`M5`, `F1`-`F5`
+- 10 persona voices: `Storyteller`, `Narrator`, `Announcer`, `Assistant`, `Urgent`, `Sage`, `Spark`, `Anchor`, `Velvet`, `Echo`
+- 31 languages: `en`, `ko`, `ja`, `ar`, `bg`, `cs`, `da`, `de`, `el`, `es`, `et`, `fi`, `fr`, `hi`, `hr`, `hu`, `id`, `it`, `lt`, `lv`, `nl`, `pl`, `pt`, `ro`, `ru`, `sk`, `sl`, `sv`, `tr`, `uk`, `vi`
+- Granular control: speed `0.7x`-`2.0x`, quality steps `1`-`100`, persona selection, OpenAI-shaped audio format requests, and batch generation for up to 20 texts
+- Voice samples are generated on demand by the paid speech tools and returned as `audio_base64` WAV output
 
 ## Tools
 
