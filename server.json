@@ -1,11 +1,11 @@
 {
-  "name": "x402-tts-mcp",
+  "name": "voice-mcp",
   "version": "0.1.0",
-  "description": "Give AI agents a voice with x402 pay-per-call text-to-speech",
-  "homepage": "https://tts.forgemesh.io",
-  "repository": "https://github.com/forgemeshlabs/x402-tts-mcp",
+  "description": "Give AI agents a voice with x402 pay-per-call speech",
+  "homepage": "https://voice.forgemesh.io",
+  "repository": "https://github.com/forgemeshlabs/voice-mcp",
   "transport": {
     "type": "stdio",
-    "command": "x402-tts-mcp"
+    "command": "voice-mcp"
   }
 }

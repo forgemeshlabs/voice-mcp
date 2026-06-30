@@ -1,6 +1,31 @@
 {
   "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "name": "voice-mcp",
+  "version": "0.1.0",
+  "description": "Give AI agents a voice with pay-per-call speech over x402 on Base.",
+  "homepage": "https://voice.forgemesh.io",
+  "repository": "https://github.com/forgemeshlabs/voice-mcp",
   "maintainers": [
     "clawdbotworker"
-  ]
+  ],
+  "transport": {
+    "type": "stdio",
+    "command": "voice-mcp"
+  },
+  "env": {
+    "WALLET_PRIVATE_KEY": {
+      "description": "Base wallet private key used by the MCP client for paid x402 calls.",
+      "required": true
+    },
+    "X402_VOICE_BASE_URL": {
+      "description": "Optional Voice API base URL.",
+      "required": false,
+      "default": "https://voice.forgemesh.io"
+    },
+    "BASE_RPC_URL": {
+      "description": "Optional Base mainnet RPC URL.",
+      "required": false,
+      "default": "https://mainnet.base.org"
+    }
+  }
 }

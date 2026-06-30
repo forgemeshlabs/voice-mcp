@@ -1,18 +1,17 @@
 {
-  "name": "x402-tts-mcp",
+  "name": "voice-mcp",
   "version": "0.1.0",
-  "mcpName": "io.github.forgemeshlabs/x402-tts-mcp",
-  "description": "Give AI agents a voice with x402 pay-per-call text-to-speech, OpenAI-shaped speech requests, persona voices, and Base USDC micropayments",
+  "mcpName": "io.github.forgemeshlabs/voice-mcp",
+  "description": "Give AI agents a voice with x402 pay-per-call speech, OpenAI-shaped speech requests, persona voices, and Base USDC micropayments",
   "main": "index.js",
   "bin": {
-    "x402-tts-mcp": "index.js"
+    "voice-mcp": "index.js"
   },
   "files": [
     "index.js",
     "README.md",
     "CHANGELOG.md",
     "SECURITY.md",
-    "GLAMA.md",
     "Dockerfile",
     "glama.json",
     "server.json"
@@ -44,11 +43,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/forgemeshlabs/x402-tts-mcp.git"
+    "url": "https://github.com/forgemeshlabs/voice-mcp.git"
   },
-  "homepage": "https://tts.forgemesh.io",
+  "homepage": "https://voice.forgemesh.io",
   "bugs": {
-    "url": "https://github.com/forgemeshlabs/x402-tts-mcp/issues"
+    "url": "https://github.com/forgemeshlabs/voice-mcp/issues"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.1",

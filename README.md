@@ -1,8 +1,8 @@
-# x402 TTS MCP
+# Voice MCP
 
-Give AI agents a voice with x402 pay-per-call text-to-speech.
+Give AI agents a voice with x402 pay-per-call speech.
 
-This MCP wraps `https://tts.forgemesh.io`, an x402 TTS API with standard voices, persona voices, OpenAI-shaped speech requests, 31 languages, speed controls, quality controls, and batch generation. Payments are made per call in USDC on Base.
+This MCP wraps `https://voice.forgemesh.io`, an x402 Voice API with standard voices, persona voices, OpenAI-shaped speech requests, 31 languages, speed controls, quality controls, and batch generation. Payments are made per call in USDC on Base.
 
 ## Tools
 
@@ -20,7 +20,7 @@ Short prices apply to 1-500 characters. Long prices apply to 501-2000 characters
 ## Install
 
 ```bash
-npm install -g x402-tts-mcp
+npm install -g voice-mcp
 ```
 
 ## MCP Config
@@ -28,8 +28,8 @@ npm install -g x402-tts-mcp
 ```json
 {
   "mcpServers": {
-    "x402-tts": {
-      "command": "x402-tts-mcp",
+    "voice": {
+      "command": "voice-mcp",
       "env": {
         "WALLET_PRIVATE_KEY": "0x..."
       }
@@ -42,7 +42,7 @@ Optional:
 
 ```json
 {
-  "X402_TTS_BASE_URL": "https://tts.forgemesh.io",
+  "X402_VOICE_BASE_URL": "https://voice.forgemesh.io",
   "BASE_RPC_URL": "https://mainnet.base.org"
 }
 ```
@@ -51,4 +51,4 @@ Optional:
 
 - Paid tools require a Base wallet private key with USDC.
 - The server returns `audio_base64` for audio tools so MCP clients can store, play, or forward the WAV bytes.
-- No API keys or subscriptions are required for the TTS service itself.
+- No API keys or subscriptions are required for the voice service itself.

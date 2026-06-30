@@ -11,13 +11,16 @@ const { privateKeyToAccount } = require("viem/accounts");
 const { createPublicClient, http } = require("viem");
 const { base } = require("viem/chains");
 
-const BASE_URL = (process.env.X402_TTS_BASE_URL || "https://voice.forgemesh.io").replace(/\/+$/, "");
+const BASE_URL = (
+  process.env.X402_VOICE_BASE_URL ||
+  "https://voice.forgemesh.io"
+).replace(/\/+$/, "");
 const BASE_RPC_URL = process.env.BASE_RPC_URL || "https://mainnet.base.org";
 
 const TOOLS = [
   {
     name: "list_tts_voices",
-    description: "List x402 TTS voices, persona voices, languages, prices, and character buckets. Free.",
+    description: "List voices, persona voices, languages, prices, and character buckets. Free.",
     inputSchema: { type: "object", properties: {} },
   },
   {
@@ -142,7 +145,7 @@ function pickBucketEndpoint(shortPath, longPath, length) {
 
 function requireWalletClient() {
   const key = process.env.WALLET_PRIVATE_KEY;
-  if (!key) throw new Error("WALLET_PRIVATE_KEY required for paid x402 TTS tools");
+  if (!key) throw new Error("WALLET_PRIVATE_KEY required for paid voice tools");
   const pk = key.startsWith("0x") ? key : "0x" + key;
   const account = privateKeyToAccount(pk);
   const coreClient = new x402Client().register("eip155:*", new ExactEvmScheme(toClientEvmSigner(account)));
@@ -285,7 +288,7 @@ async function callTool(name, args = {}) {
   throw new Error(`Unknown tool: ${name}`);
 }
 
-const server = new McpServer({ name: "x402-tts-mcp", version: "0.1.0" });
+const server = new McpServer({ name: "voice-mcp", version: "0.1.0" });
 server.server.onerror = (error) => {
   console.error(error instanceof Error ? error.message : String(error));
 };
