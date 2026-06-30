@@ -12,6 +12,16 @@
     "type": "stdio",
     "command": "voice-mcp"
   },
+  "build": {
+    "dockerfile": "Dockerfile",
+    "steps": [
+      "npm ci --omit=dev"
+    ],
+    "cmd": [
+      "node",
+      "index.js"
+    ]
+  },
   "env": {
     "WALLET_PRIVATE_KEY": {
       "description": "Base wallet private key used by the MCP client for paid x402 calls.",

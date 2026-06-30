@@ -45,6 +45,28 @@ Short prices apply to 1-500 characters. Long prices apply to 501-2000 characters
 npm install -g @forgemeshlabs/voice-mcp
 ```
 
+## Docker
+
+Build:
+
+```bash
+docker build -t voice-mcp .
+```
+
+Run over stdio:
+
+```bash
+docker run --rm -i \
+  -e WALLET_PRIVATE_KEY=0x... \
+  voice-mcp
+```
+
+CMD arguments:
+
+```json
+["node", "index.js"]
+```
+
 ## MCP Config
 
 ```json
