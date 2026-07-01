@@ -39,6 +39,9 @@ This MCP wraps `https://voice.forgemesh.io`, an x402 Voice API with standard voi
 
 Short prices apply to 1-500 characters. Long prices apply to 501-2000 characters.
 
+The MCP validates voice names, language codes, audio formats, speed/quality ranges,
+batch item count, and character limits locally before making a paid x402 call.
+
 ## Install
 
 ```bash

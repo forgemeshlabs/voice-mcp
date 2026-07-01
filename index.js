@@ -16,6 +16,14 @@ const BASE_URL = (
   "https://voice.forgemesh.io"
 ).replace(/\/+$/, "");
 const BASE_RPC_URL = process.env.BASE_RPC_URL || "https://mainnet.base.org";
+const MAX_SHORT_CHARS = 500;
+const MAX_LONG_CHARS = 2000;
+const MAX_BATCH_ITEMS = 20;
+const BASE_VOICES = ["M1", "M2", "M3", "M4", "M5", "F1", "F2", "F3", "F4", "F5"];
+const PERSONA_VOICES = ["Storyteller", "Narrator", "Announcer", "Assistant", "Urgent", "Sage", "Spark", "Anchor", "Velvet", "Echo"];
+const ALL_VOICES = [...BASE_VOICES, ...PERSONA_VOICES];
+const LANGUAGES = ["en", "ko", "ja", "ar", "bg", "cs", "da", "de", "el", "es", "et", "fi", "fr", "hi", "hr", "hu", "id", "it", "lt", "lv", "nl", "pl", "pt", "ro", "ru", "sk", "sl", "sv", "tr", "uk", "vi"];
+const AUDIO_FORMATS = ["wav", "flac", "ogg"];
 
 const TOOLS = [
   {
@@ -31,9 +39,9 @@ const TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        text: { type: "string", description: "Text to synthesize, max 2000 characters" },
-        voice: { type: "string", description: "Standard voice: M1-M5 or F1-F5" },
-        lang: { type: "string", description: "Language code, default en" },
+        text: { type: "string", maxLength: MAX_LONG_CHARS, description: "Text to synthesize, max 2000 characters" },
+        voice: { type: "string", enum: BASE_VOICES, description: "Standard voice: M1-M5 or F1-F5" },
+        lang: { type: "string", enum: LANGUAGES, description: "Language code, default en" },
       },
       required: ["text"],
     },
@@ -45,11 +53,11 @@ const TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        text: { type: "string", description: "Text to synthesize, max 2000 characters" },
-        voice: { type: "string", description: "Standard voice: M1-M5 or F1-F5" },
-        lang: { type: "string", description: "Language code, default en" },
-        speed: { type: "number", description: "Speech speed, 0.7-2.0" },
-        steps: { type: "integer", description: "Quality steps, 1-100" },
+        text: { type: "string", maxLength: MAX_LONG_CHARS, description: "Text to synthesize, max 2000 characters" },
+        voice: { type: "string", enum: BASE_VOICES, description: "Standard voice: M1-M5 or F1-F5" },
+        lang: { type: "string", enum: LANGUAGES, description: "Language code, default en" },
+        speed: { type: "number", minimum: 0.7, maximum: 2.0, description: "Speech speed, 0.7-2.0" },
+        steps: { type: "integer", minimum: 1, maximum: 100, description: "Quality steps, 1-100" },
       },
       required: ["text"],
     },
@@ -61,11 +69,11 @@ const TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        text: { type: "string", description: "Text to synthesize, max 2000 characters" },
-        voice: { type: "string", description: "Persona voice name, default Storyteller" },
-        lang: { type: "string", description: "Language code, default en" },
-        speed: { type: "number", description: "Speech speed, 0.7-2.0" },
-        steps: { type: "integer", description: "Quality steps, 1-100" },
+        text: { type: "string", maxLength: MAX_LONG_CHARS, description: "Text to synthesize, max 2000 characters" },
+        voice: { type: "string", enum: ALL_VOICES, description: "Voice name; personas include Storyteller, Narrator, Announcer, Assistant, Urgent, Sage, Spark, Anchor, Velvet, Echo" },
+        lang: { type: "string", enum: LANGUAGES, description: "Language code, default en" },
+        speed: { type: "number", minimum: 0.7, maximum: 2.0, description: "Speech speed, 0.7-2.0" },
+        steps: { type: "integer", minimum: 1, maximum: 100, description: "Quality steps, 1-100" },
       },
       required: ["text"],
     },
@@ -77,10 +85,10 @@ const TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        input: { type: "string", description: "Text to synthesize, max 2000 characters" },
-        voice: { type: "string", description: "Standard voice: M1-M5 or F1-F5" },
+        input: { type: "string", maxLength: MAX_LONG_CHARS, description: "Text to synthesize, max 2000 characters" },
+        voice: { type: "string", enum: BASE_VOICES, description: "Standard voice: M1-M5 or F1-F5" },
         model: { type: "string", description: "Optional model field; service uses ForgeMesh Voice" },
-        response_format: { type: "string", description: "wav, flac, or ogg" },
+        response_format: { type: "string", enum: AUDIO_FORMATS, description: "wav, flac, or ogg" },
       },
       required: ["input"],
     },
@@ -94,10 +102,27 @@ const TOOLS = [
       properties: {
         items: {
           type: "array",
-          description: "Array of text items: { text, voice?, lang? }",
-          items: { type: "object" },
+          minItems: 1,
+          maxItems: MAX_BATCH_ITEMS,
+          description: "Array of text items: { text, voice?, lang? }. Total text across all items must be <= 2000 chars.",
+          items: {
+            type: "object",
+            properties: {
+              text: { type: "string", maxLength: MAX_LONG_CHARS },
+              voice: { type: "string", enum: BASE_VOICES },
+              lang: { type: "string", enum: LANGUAGES },
+            },
+            required: ["text"],
+          },
         },
-        defaults: { type: "object", description: "Default standard voice and language" },
+        defaults: {
+          type: "object",
+          description: "Default standard voice and language",
+          properties: {
+            voice: { type: "string", enum: BASE_VOICES },
+            lang: { type: "string", enum: LANGUAGES },
+          },
+        },
       },
       required: ["items"],
     },
@@ -107,46 +132,54 @@ const TOOLS = [
 const TOOL_SCHEMAS = {
   list_voice_catalog: {},
   generate_standard_voice: {
-    text: z.string().describe("Text to synthesize, max 2000 characters"),
-    voice: z.string().optional().describe("Standard voice: M1-M5 or F1-F5"),
-    lang: z.string().optional().describe("Language code, default en"),
+    text: z.string().min(1).max(MAX_LONG_CHARS).describe("Text to synthesize, max 2000 characters"),
+    voice: z.enum(BASE_VOICES).optional().describe("Standard voice: M1-M5 or F1-F5"),
+    lang: z.enum(LANGUAGES).optional().describe("Language code, default en"),
   },
   generate_controlled_voice: {
-    text: z.string().describe("Text to synthesize, max 2000 characters"),
-    voice: z.string().optional().describe("Standard voice: M1-M5 or F1-F5"),
-    lang: z.string().optional().describe("Language code, default en"),
-    speed: z.number().optional().describe("Speech speed, 0.7-2.0"),
-    steps: z.number().int().optional().describe("Quality steps, 1-100"),
+    text: z.string().min(1).max(MAX_LONG_CHARS).describe("Text to synthesize, max 2000 characters"),
+    voice: z.enum(BASE_VOICES).optional().describe("Standard voice: M1-M5 or F1-F5"),
+    lang: z.enum(LANGUAGES).optional().describe("Language code, default en"),
+    speed: z.number().min(0.7).max(2.0).optional().describe("Speech speed, 0.7-2.0"),
+    steps: z.number().int().min(1).max(100).optional().describe("Quality steps, 1-100"),
   },
   generate_persona_voice: {
-    text: z.string().describe("Text to synthesize, max 2000 characters"),
-    voice: z.string().optional().describe("Persona voice name, default Storyteller"),
-    lang: z.string().optional().describe("Language code, default en"),
-    speed: z.number().optional().describe("Speech speed, 0.7-2.0"),
-    steps: z.number().int().optional().describe("Quality steps, 1-100"),
+    text: z.string().min(1).max(MAX_LONG_CHARS).describe("Text to synthesize, max 2000 characters"),
+    voice: z.enum(ALL_VOICES).optional().describe("Voice name; personas include Storyteller, Narrator, Announcer, Assistant, Urgent, Sage, Spark, Anchor, Velvet, Echo"),
+    lang: z.enum(LANGUAGES).optional().describe("Language code, default en"),
+    speed: z.number().min(0.7).max(2.0).optional().describe("Speech speed, 0.7-2.0"),
+    steps: z.number().int().min(1).max(100).optional().describe("Quality steps, 1-100"),
   },
   generate_openai_compatible_voice: {
-    input: z.string().describe("Text to synthesize, max 2000 characters"),
-    voice: z.string().optional().describe("Standard voice: M1-M5 or F1-F5"),
+    input: z.string().min(1).max(MAX_LONG_CHARS).describe("Text to synthesize, max 2000 characters"),
+    voice: z.enum(BASE_VOICES).optional().describe("Standard voice: M1-M5 or F1-F5"),
     model: z.string().optional().describe("Optional model field; service uses ForgeMesh Voice"),
-    response_format: z.string().optional().describe("wav, flac, or ogg"),
+    response_format: z.enum(AUDIO_FORMATS).optional().describe("wav, flac, or ogg"),
   },
   generate_batch_voices: {
     items: z.array(z.object({
-      text: z.string(),
-      voice: z.string().optional(),
-      lang: z.string().optional(),
-    })).min(1).max(20).describe("Array of text items"),
+      text: z.string().min(1).max(MAX_LONG_CHARS),
+      voice: z.enum(BASE_VOICES).optional(),
+      lang: z.enum(LANGUAGES).optional(),
+    })).min(1).max(MAX_BATCH_ITEMS).describe("Array of text items; total text across all items must be <= 2000 chars"),
     defaults: z.object({
-      voice: z.string().optional(),
-      lang: z.string().optional(),
+      voice: z.enum(BASE_VOICES).optional(),
+      lang: z.enum(LANGUAGES).optional(),
     }).optional().describe("Default standard voice and language"),
   },
 };
 
 function pickBucketEndpoint(shortPath, longPath, length) {
-  if (length > 2000) throw new Error("Text is over the 2000 character maximum");
-  return length > 500 ? longPath : shortPath;
+  if (length > MAX_LONG_CHARS) throw new Error(`Text is over the ${MAX_LONG_CHARS} character maximum`);
+  return length > MAX_SHORT_CHARS ? longPath : shortPath;
+}
+
+function pickBatchEndpoint(items) {
+  if (!Array.isArray(items) || items.length === 0) throw new Error("items must be a non-empty array");
+  if (items.length > MAX_BATCH_ITEMS) throw new Error(`items exceeds the ${MAX_BATCH_ITEMS} item maximum`);
+  const totalChars = items.reduce((sum, item) => sum + String(item?.text || "").length, 0);
+  if (totalChars > MAX_LONG_CHARS) throw new Error(`Batch text is over the ${MAX_LONG_CHARS} total character maximum`);
+  return pickBucketEndpoint("/v1/tts/batch", "/v1/tts/batch-long", totalChars);
 }
 
 function requireWalletClient() {
@@ -285,16 +318,14 @@ async function callTool(name, args = {}) {
   }
 
   if (name === "generate_batch_voices") {
-    if (!Array.isArray(args.items) || args.items.length === 0) throw new Error("items must be a non-empty array");
-    const totalChars = args.items.reduce((sum, item) => sum + String(item?.text || "").length, 0);
-    const path = pickBucketEndpoint("/v1/tts/batch", "/v1/tts/batch-long", totalChars);
+    const path = pickBatchEndpoint(args.items);
     return paidPost(path, { items: args.items, defaults: args.defaults || { voice: "F2", lang: "en" } });
   }
 
   throw new Error(`Unknown tool: ${name}`);
 }
 
-const server = new McpServer({ name: "voice-mcp", version: "0.1.0" });
+const server = new McpServer({ name: "voice-mcp", version: "0.1.2" });
 server.server.onerror = (error) => {
   console.error(error instanceof Error ? error.message : String(error));
 };
@@ -338,4 +369,5 @@ module.exports = {
   TOOL_SCHEMAS,
   callTool,
   pickBucketEndpoint,
+  pickBatchEndpoint,
 };

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 "use strict";
 
-const { TOOLS, TOOL_SCHEMAS, pickBucketEndpoint } = require("../index.js");
+const { TOOLS, TOOL_SCHEMAS, pickBucketEndpoint, pickBatchEndpoint } = require("../index.js");
 
 const expected = [
   "generate_batch_voices",
@@ -31,5 +31,24 @@ try {
   tooLongFailed = true;
 }
 if (!tooLongFailed) throw new Error("Over-limit text did not fail");
+
+if (pickBatchEndpoint([{ text: "x".repeat(500) }]) !== "/v1/tts/batch") throw new Error("Short batch route failed");
+if (pickBatchEndpoint([{ text: "x".repeat(501) }]) !== "/v1/tts/batch-long") throw new Error("Long batch route failed");
+
+let batchTooLongFailed = false;
+try {
+  pickBatchEndpoint([{ text: "x".repeat(2001) }]);
+} catch (_) {
+  batchTooLongFailed = true;
+}
+if (!batchTooLongFailed) throw new Error("Over-limit batch text did not fail");
+
+let batchTooManyFailed = false;
+try {
+  pickBatchEndpoint(Array.from({ length: 21 }, () => ({ text: "x" })));
+} catch (_) {
+  batchTooManyFailed = true;
+}
+if (!batchTooManyFailed) throw new Error("Over-limit batch item count did not fail");
 
 console.log(`MCP contract ok: ${names.length} tools`);
