@@ -1,5 +1,7 @@
 # Voice MCP
 
+[![M8ven Verified](https://m8ven.ai/badge/mcp/forgemeshlabs-voice-mcp-q8gh7d?variant=verified)](https://m8ven.ai/mcp/forgemeshlabs-voice-mcp-q8gh7d)
+
 [![npm version](https://img.shields.io/npm/v/@forgemeshlabs/voice-mcp)](https://www.npmjs.com/package/@forgemeshlabs/voice-mcp)
 [![npm downloads](https://img.shields.io/npm/dm/@forgemeshlabs/voice-mcp)](https://www.npmjs.com/package/@forgemeshlabs/voice-mcp)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
