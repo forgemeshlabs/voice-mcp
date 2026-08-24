@@ -29,12 +29,14 @@ const TOOLS = [
   {
     name: "list_voice_catalog",
     title: "List Voice Catalog",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     description: "Free discovery tool. Lists all 20 voices, 10 persona voices, 31 language codes, price buckets, character limits, and granular speed/quality controls before a paid voice generation call.",
     inputSchema: { type: "object", properties: {} },
   },
   {
     name: "generate_standard_voice",
     title: "Generate Standard Voice",
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     description: "Generate low-cost WAV speech from text using one of 10 standard voices across 31 languages. Best for simple agent narration, status updates, alerts, and short spoken responses. Costs $0.001 for 1-500 chars or $0.003 for 501-2000 chars.",
     inputSchema: {
       type: "object",
@@ -49,6 +51,7 @@ const TOOLS = [
   {
     name: "generate_controlled_voice",
     title: "Generate Controlled Voice",
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     description: "Generate WAV speech with granular controls for speed and quality. Use this when an agent needs faster, slower, clearer, more polished, or more deliberate delivery. Costs $0.003 for 1-500 chars or $0.006 for 501-2000 chars.",
     inputSchema: {
       type: "object",
@@ -65,6 +68,7 @@ const TOOLS = [
   {
     name: "generate_persona_voice",
     title: "Generate Persona Voice",
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     description: "Generate expressive WAV speech with persona voices such as Storyteller, Narrator, Announcer, Assistant, Urgent, Sage, Spark, Anchor, Velvet, or Echo. Best for branded agents, characters, demos, stories, alerts, and premium user experiences. Costs $0.005 for 1-500 chars or $0.01 for 501-2000 chars.",
     inputSchema: {
       type: "object",
@@ -81,6 +85,7 @@ const TOOLS = [
   {
     name: "generate_openai_compatible_voice",
     title: "Generate OpenAI-Compatible Voice",
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     description: "Generate speech using an OpenAI-shaped request with input, voice, model, and response_format fields. Use this for agents or apps already designed around /v1/audio/speech style payloads. Costs $0.001 for 1-500 chars or $0.003 for 501-2000 chars.",
     inputSchema: {
       type: "object",
@@ -96,6 +101,7 @@ const TOOLS = [
   {
     name: "generate_batch_voices",
     title: "Generate Batch Voices",
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     description: "Generate WAV audio for up to 20 text items in one paid call using standard voices. Best for queues, notifications, scripted sequences, content batches, and multi-step agent workflows. Costs $0.002 for up to 500 total chars or $0.005 for 501-2000 total chars.",
     inputSchema: {
       type: "object",
@@ -336,6 +342,7 @@ for (const tool of TOOLS) {
       title: tool.title,
       description: tool.description,
       inputSchema: TOOL_SCHEMAS[tool.name],
+      annotations: tool.annotations,
     },
     async (args) => {
       try {
