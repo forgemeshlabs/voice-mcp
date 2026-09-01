@@ -1,11 +1,30 @@
 {
-  "name": "voice-mcp",
-  "version": "0.1.0",
-  "description": "Give Your Agent A Voice: x402 pay-per-call speech with 20 voices, 10 personas, 31 languages, granular speed and quality controls, OpenAI-shaped requests, and batch audio",
-  "homepage": "https://voice.forgemesh.io",
-  "repository": "https://github.com/forgemeshlabs/voice-mcp",
-  "transport": {
-    "type": "stdio",
-    "command": "voice-mcp"
-  }
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.forgemeshlabs/voice-mcp",
+  "description": "Give Your Agent A Voice: x402 pay-per-call speech with 20 voices, 10 personas, 31 languages.",
+  "repository": {
+    "url": "https://github.com/forgemeshlabs/voice-mcp",
+    "source": "github"
+  },
+  "websiteUrl": "https://voice.forgemesh.io",
+  "version": "0.2.2",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@forgemeshlabs/voice-mcp",
+      "version": "0.2.2",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ],
+  "icons": [
+    {
+      "src": "https://forgemesh.io/favicon.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "1254x1254"
+      ]
+    }
+  ]
 }
