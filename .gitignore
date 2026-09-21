@@ -4,3 +4,6 @@ npm-debug.log*
 .env
 .DS_Store
 index.html
+
+# local code-graph index, never committed
+.graphify/
