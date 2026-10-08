@@ -88,14 +88,12 @@ CMD arguments:
 }
 ```
 
-Optional:
+## Requirements and safety
 
-```json
-{
-  "X402_VOICE_BASE_URL": "https://voice.forgemesh.io",
-  "BASE_RPC_URL": "https://mainnet.base.org"
-}
-```
+- Use a dedicated, low-balance wallet; the server signs payments with `WALLET_PRIVATE_KEY`.
+- The server refuses to sign for any payee other than the ForgeMesh Voice wallet, any network other than Base mainnet, any asset other than USDC, or any amount over the built-in per-call cap ($0.01).
+- Optional env `X402_MAX_PRICE_USD` (per call) and `X402_SESSION_BUDGET_USD` (cumulative per process, default $10) can only LOWER the built-in caps.
+- The backend URL is fixed to `https://voice.forgemesh.io`; all requests are same-origin, time-limited (60s), size-capped (2 MB) and never follow redirects.
 
 ## Notes
 

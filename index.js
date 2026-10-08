@@ -8,14 +8,9 @@ const { x402Client, x402HTTPClient } = require("@x402/core/client");
 const { ExactEvmScheme } = require("@x402/evm/exact/client");
 const { toClientEvmSigner } = require("@x402/evm");
 const { privateKeyToAccount } = require("viem/accounts");
-const { createPublicClient, http } = require("viem");
-const { base } = require("viem/chains");
+const { createGuard } = require("./x402-guard");
 
-const BASE_URL = (
-  process.env.X402_VOICE_BASE_URL ||
-  "https://voice.forgemesh.io"
-).replace(/\/+$/, "");
-const BASE_RPC_URL = process.env.BASE_RPC_URL || "https://mainnet.base.org";
+const BASE_URL = "https://voice.forgemesh.io";
 const MAX_SHORT_CHARS = 500;
 const MAX_LONG_CHARS = 2000;
 const MAX_BATCH_ITEMS = 20;
@@ -188,91 +183,43 @@ function pickBatchEndpoint(items) {
   return pickBucketEndpoint("/v1/tts/batch", "/v1/tts/batch-long", totalChars);
 }
 
+const guard = createGuard({
+  baseUrl: BASE_URL,
+  payTo: ["0x962794FB8aD92941fAf1ab446b9e30637B86F331"],
+  maxPriceUsd: 0.01, // highest listed tool price
+  sessionBudgetUsd: 10,
+});
+
 function requireWalletClient() {
   const key = process.env.WALLET_PRIVATE_KEY;
   if (!key) throw new Error("WALLET_PRIVATE_KEY required for paid voice tools");
   const pk = key.startsWith("0x") ? key : "0x" + key;
   const account = privateKeyToAccount(pk);
-  const coreClient = new x402Client().register("eip155:*", new ExactEvmScheme(toClientEvmSigner(account)));
+  const coreClient = new x402Client()
+    .register("eip155:*", new ExactEvmScheme(toClientEvmSigner(account)))
+    .registerPolicy(guard.policy);
   return { httpClient: new x402HTTPClient(coreClient), account };
-}
-
-async function createChainTimedPaymentPayload(httpClient, paymentRequired) {
-  try {
-    const publicClient = createPublicClient({ chain: base, transport: http(BASE_RPC_URL) });
-    const block = await publicClient.getBlock();
-    const chainNow = Number(block.timestamp);
-    const originalNow = Date.now;
-    const localNow = Math.floor(originalNow() / 1000);
-    const timeout = Number(paymentRequired.accepts?.[0]?.maxTimeoutSeconds || 300);
-    const lowerBound = localNow + 30 - timeout;
-    const upperBound = chainNow + 600;
-    const signingNow = Math.min(Math.max(chainNow, lowerBound), upperBound);
-    Date.now = () => signingNow * 1000;
-    try {
-      return await httpClient.createPaymentPayload(paymentRequired);
-    } finally {
-      Date.now = originalNow;
-    }
-  } catch (_) {
-    return httpClient.createPaymentPayload(paymentRequired);
-  }
 }
 
 async function paidPost(path, body) {
   const { httpClient } = requireWalletClient();
-  const url = BASE_URL + path;
-  const init = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  };
-  const challengeRes = await fetch(url, init);
-  if (challengeRes.status !== 402) {
-    const text = await challengeRes.text().catch(() => "");
-    throw new Error(`Expected x402 challenge, got ${challengeRes.status}: ${text.slice(0, 240)}`);
+  const out = await guard.callPaid(httpClient, path, { method: "POST", body });
+  if (out && out._binary) {
+    return {
+      content_type: out.content_type || "audio/wav",
+      audio_base64: out.bytes.toString("base64"),
+      bytes: out.bytes.length,
+      payment_response: out._payment,
+    };
   }
-
-  let challengeBody;
-  try {
-    challengeBody = await challengeRes.clone().json();
-  } catch (_) {}
-  const paymentRequired = httpClient.getPaymentRequiredResponse(
-    (name) => challengeRes.headers.get(name),
-    challengeBody
-  );
-  const paymentPayload = await createChainTimedPaymentPayload(httpClient, paymentRequired);
-  const paidRes = await fetch(url, {
-    ...init,
-    headers: {
-      ...init.headers,
-      ...httpClient.encodePaymentSignatureHeader(paymentPayload),
-    },
-  });
-  if (!paidRes.ok) {
-    const text = await paidRes.text().catch(() => paidRes.statusText);
-    throw new Error(`Paid TTS call failed: ${paidRes.status} ${text.slice(0, 240)}`);
-  }
-
-  const paymentReceipt = paidRes.headers.get("payment-response");
-  const contentType = paidRes.headers.get("content-type") || "";
-  if (contentType.includes("application/json")) {
-    const json = await paidRes.json();
-    return { content_type: contentType, response: json, payment_response: paymentReceipt };
-  }
-  const audio = Buffer.from(await paidRes.arrayBuffer());
-  return {
-    content_type: contentType || "audio/wav",
-    audio_base64: audio.toString("base64"),
-    bytes: audio.length,
-    payment_response: paymentReceipt,
-  };
+  const { _payment, ...response } = out;
+  return { content_type: "application/json", response, payment_response: _payment };
 }
 
 async function freeGet(path) {
-  const res = await fetch(BASE_URL + path);
+  const res = await guard.fetchBounded(path);
   if (!res.ok) throw new Error(`GET ${path} failed: ${res.status}`);
-  return res.json();
+  return JSON.parse(res.text);
 }
 
 function textResult(value) {
@@ -331,7 +278,7 @@ async function callTool(name, args = {}) {
   throw new Error(`Unknown tool: ${name}`);
 }
 
-const server = new McpServer({ name: "voice-mcp", version: "0.2.3" });
+const server = new McpServer({ name: "voice-mcp", version: require("./package.json").version });
 server.server.onerror = (error) => {
   console.error(error instanceof Error ? error.message : String(error));
 };
