@@ -331,7 +331,7 @@ async function callTool(name, args = {}) {
   throw new Error(`Unknown tool: ${name}`);
 }
 
-const server = new McpServer({ name: "voice-mcp", version: "0.2.2" });
+const server = new McpServer({ name: "voice-mcp", version: "0.2.3" });
 server.server.onerror = (error) => {
   console.error(error instanceof Error ? error.message : String(error));
 };
