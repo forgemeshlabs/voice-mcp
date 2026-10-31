@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.6 — 2026-10-31
+- Price copy: every route now $0.005 minimum (fleet pricing floor); no behaviour change, the live 402 still sets the amount.
+
 ## 0.1.2
 
 - Added MCP-side voice, language, audio format, speed, quality, item-count, and character-limit validation so invalid paid calls are rejected before x402 payment.
