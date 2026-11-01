@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.7
+
+- Dependencies: zod 3 â 4.6.7 (GHSA-mrhx-c7xc-m3w5); lockfile refresh resolving the open npm advisories (zod via @x402/core, body-parser, fast-uri, qs, ip-address, @hono/node-server as applicable). No behavior change.
+
 ## 0.2.6 — 2026-10-31
 - Price copy: every route now $0.005 minimum (fleet pricing floor); no behaviour change, the live 402 still sets the amount.
 
