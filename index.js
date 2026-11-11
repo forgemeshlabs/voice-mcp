@@ -32,7 +32,7 @@ const TOOLS = [
     name: "generate_standard_voice",
     title: "Generate Standard Voice",
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
-    description: "Generate low-cost WAV speech from text using one of 10 standard voices across 31 languages. Best for simple agent narration, status updates, alerts, and short spoken responses. Costs $0.005 for 501-2000 chars.",
+    description: "Text to speech (TTS): turn up to 2,000 characters of text into spoken WAV audio in one of 10 standard voices (M1-M5 male, F1-F5 female) across 31 languages. Best for agent narration, status updates, alerts and short spoken responses. Costs $0.005 for 501-2000 chars.",
     inputSchema: {
       type: "object",
       properties: {
@@ -47,7 +47,7 @@ const TOOLS = [
     name: "generate_controlled_voice",
     title: "Generate Controlled Voice",
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
-    description: "Generate WAV speech with granular controls for speed and quality. Use this when an agent needs faster, slower, clearer, more polished, or more deliberate delivery. Costs $0.005 for 1-500 chars or $0.006 for 501-2000 chars.",
+    description: "Text to speech (TTS) with speed control: turn text into spoken WAV audio at a chosen speaking speed (0.7x to 2.0x) and quality steps (1-100), in 10 standard voices and 31 languages. Use it for faster, slower or more deliberate delivery. Costs $0.005 for 1-500 chars or $0.006 for 501-2000 chars.",
     inputSchema: {
       type: "object",
       properties: {
@@ -64,7 +64,7 @@ const TOOLS = [
     name: "generate_persona_voice",
     title: "Generate Persona Voice",
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
-    description: "Generate expressive WAV speech with persona voices such as Storyteller, Narrator, Announcer, Assistant, Urgent, Sage, Spark, Anchor, Velvet, or Echo. Best for branded agents, characters, demos, stories, alerts, and premium user experiences. Costs $0.005 for 1-500 chars or $0.01 for 501-2000 chars.",
+    description: "Text to speech (TTS) with persona voices: turn text into expressive spoken WAV audio with personas such as Storyteller, Narrator, Announcer, Assistant, Urgent, Sage, Spark, Anchor, Velvet or Echo. Best for branded agents, characters, demos and stories. Costs $0.005 for 1-500 chars or $0.01 for 501-2000 chars.",
     inputSchema: {
       type: "object",
       properties: {
@@ -81,7 +81,7 @@ const TOOLS = [
     name: "generate_openai_compatible_voice",
     title: "Generate OpenAI-Compatible Voice",
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
-    description: "Generate speech using an OpenAI-shaped request with input, voice, model, and response_format fields. Use this for agents or apps already designed around /v1/audio/speech style payloads. Costs $0.005 for 501-2000 chars.",
+    description: "Text to speech (TTS), OpenAI-compatible: generate speech from an OpenAI-shaped request with input, voice, model and response_format fields (WAV, FLAC or OGG). Use it for agents or apps built around /v1/audio/speech payloads. Costs $0.005 for 501-2000 chars.",
     inputSchema: {
       type: "object",
       properties: {
@@ -97,7 +97,7 @@ const TOOLS = [
     name: "generate_batch_voices",
     title: "Generate Batch Voices",
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
-    description: "Generate WAV audio for up to 20 text items in one paid call using standard voices. Best for queues, notifications, scripted sequences, content batches, and multi-step agent workflows. Costs $0.005 for 501-2000 total chars.",
+    description: "Batch text to speech (TTS): turn up to 20 separate text items into WAV audio in one paid call using standard voices. Best for queues, notifications, scripted sequences and content batches. Costs $0.005 for 501-2000 total chars.",
     inputSchema: {
       type: "object",
       properties: {
